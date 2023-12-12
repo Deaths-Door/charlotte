@@ -1,0 +1,16 @@
+
+[build-system]
+requires = ["setuptools>=64.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "charlotte"
+version = "0.0.1"
+
+#authors = [{ name="Aarav Shah" , email="<aaravaditya51@gmail.com>"}]
+#description = "TODO"
+#readme = "README.md"
+
+#[project.urls]
+#Homepage = "https://github.com/Deaths-Door/charlotte"
+#Issues = "https://github.com/Deaths-Door/charlotte/issues"
