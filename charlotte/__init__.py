@@ -3,7 +3,6 @@ from collections import deque
 
 # TODO : ADD has won and ai play methods to the board class 
 
-
 class Symbol(Enum):
     """ 
     Represents the two possible symbols in the game: X and O
@@ -200,7 +199,7 @@ class Board:
             list[tuple[int, int]]: A list of valid move positions
         """
         try :
-            if not self.is_valid_point(cords) or self.is_empty_at(cords) :
+            if not self.is_valid_point(cords) or not self.is_empty_at(cords) :
                 return False
         except :
             return False
@@ -221,8 +220,9 @@ class Board:
         Returns:
             bool: True if the move was successful, False if the position was invalid
         """
+        temp =  self.make_move_with(self.current_player,cords)
         self.current_player = self.current_player.other()
-        return self.make_move_with(self.current_player,cords)
+        return temp
     
     def undo_move(self,move : Move) :
         """

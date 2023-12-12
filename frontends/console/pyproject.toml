@@ -1,0 +1,15 @@
+
+[build-system]
+requires = ["setuptools>=64.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "charlotte-console"
+version = "0.0.1"
+authors = [{ name="Aarav Shah" , email="<aaravaditya51@gmail.com>"}]
+
+#TODO : Add reamde for this and make a descriptino for this as well
+
+[project.urls]
+Homepage = "https://github.com/Deaths-Door/charlotte"
+Issues = "https://github.com/Deaths-Door/charlotte/issues"
