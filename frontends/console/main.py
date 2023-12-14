@@ -1,5 +1,6 @@
 # TODO : Keep this until charloote lib is not published, then remove it 
 import os
+from symtable import Symbol
 import sys
 sys.path.insert(0, os.path.abspath('.'))
 
@@ -13,19 +14,28 @@ def get_grid_dimensions():
     return grid_size
 
 def get_in_row_to_win(dimensions) :
-    n = int(input("Enter the number of 'symbols' in row to win (default is 3)"))
+    n = int(input("Enter the number of 'symbols' in row to win (default is 3): "))
     if n < dimensions :
         print(f"Invalid number , please enter a number >= {n}")
         return get_in_row_to_win(dimensions)
     
     return n
 
-def get_undo_option():
-    undo_option = input("Would you like to enable undo support (y/n)? ")
-    if undo_option.lower() not in ["y", "n"]:
+def get_ja_nein_response(prompt):
+    op = input(f"{prompt} (y/n)? ")
+    if op.lower() not in ["y", "n"]:
         print("Invalid input. Please enter 'y' or 'n'.")
-        return get_undo_option()
-    return undo_option.lower() == "y"
+        return get_ja_nein_response(prompt)
+    return op.lower() == "y"
+
+def successful_move(successful) : 
+    print("Move made successfully." if successful else "Invalid coordinates. Please enter a valid coordinate.")
+
+def player_wins(board) :
+    if board.has_won(board.current_player.other()) :
+        print(f"{board.current_player} wins")
+        print(board)
+        exit(0)
 
 def input_coords(board : Board,coords) :
     try:
@@ -33,22 +43,30 @@ def input_coords(board : Board,coords) :
         row = int(row)
         col = int(col)
 
-        print("Move made successfully." if board.make_move((row, col)) else "Invalid coordinates. Please enter a valid coordinate.")
+        successful_move(board.make_move((row, col)))
+        player_wins(board)
     except ValueError:
         print("Invalid input. Please enter a valid coordinate string, separated by a comma.")
-        
+
+def ai_moves(board) :
+    #TODO  
+    #successful_move(board.make_move((row, col)))
+        #player_wins(board)
+
+    pass
+
 def main() :
     dimensions = get_grid_dimensions()
     in_row_to_win = get_in_row_to_win(dimensions)
-    enable_undo = get_undo_option()
+    is_single_player = get_ja_nein_response("Would you like to player in single player mode")
+    enable_undo = get_ja_nein_response("Would you like to enable undo support")
     board = Board(dimensions,in_row_to_win)
 
     while True :
         print(board)
-        
-        #TODO : Check if it is solved and show who in the hell won
-        action = input("What would you like to do?\n(1) Make a move (Enter coordinates)\n(2) Undo a move\n(3) Quit\n")
-        
+    
+        action = input(f"What would you like to do?\n{"" if is_single_player else "(coords) Make a move (Enter coordinates)\n"}(undo) Undo a move\n(quit) Quit\n")
+
         match action :
             case "quit" : exit(0)
             case "undo" : 
@@ -57,7 +75,6 @@ def main() :
                     continue
                 
                 print("Undo is currently disabled.")
-            case _ : input_coords(board,coords=action)
-
+            case _ : (print("Note: Do not enter the coordinates in a single player game"),ai_moves(board)) if is_single_player else input_coords(board,coords=action)
 
 if __name__ == "__main__": main()

@@ -188,7 +188,27 @@ class Board:
             if self.board[row][col] is None
         ]
     
-    
+    def moves_by(self,symbol : Symbol) -> list[tuple[int,int]] :
+        """
+            Retrieve all moves made by a specific symbol.
+
+            Args:
+                symbol: The symbol to filter moves by. Must be of type `Symbol`.
+
+            Returns:
+                A list of tuples representing the coordinates of all moves made by the specified symbol.
+        """
+        return [move.cords for move in self.moves if move.symbol is symbol]
+
+    def move_by_current_player(self) -> list[tuple[int,int]] :
+        """
+            Retrieve all moves made by the current player.
+
+            Returns:
+                A list of tuples representing the coordinates of all moves made by the current player.
+        """
+        return self.moves_by(self.current_player)
+
     def make_move_with(self,symbol : Symbol,cords: tuple[int, int]) -> bool :
         """
         Returns a list of all valid moves on the board.
@@ -220,7 +240,7 @@ class Board:
         Returns:
             bool: True if the move was successful, False if the position was invalid
         """
-        temp =  self.make_move_with(self.current_player,cords)
+        temp = self.make_move_with(self.current_player,cords)
         self.current_player = self.current_player.other()
         return temp
     
@@ -236,7 +256,12 @@ class Board:
 
     def undo_last_move(self) : 
         """Undoes the last move made on the board."""
+        self.current_player = self.current_player.other()
         self.undo_move(self.moves.pop())
+
+    # TODO : FIX THIS nly works for horizontal
+    def has_won(self, player: Symbol) -> bool:
+        pass
 
     def __repr_row__(self,row : list[Symbol | None]) -> str : 
        return '|'.join([f" {" " if item is None else item.__repr__()} " for item in row])
