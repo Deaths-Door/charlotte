@@ -1,6 +1,5 @@
 # TODO : Keep this until charloote lib is not published, then remove it 
 import os
-from symtable import Symbol
 import sys
 sys.path.insert(0, os.path.abspath('.'))
 

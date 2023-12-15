@@ -188,6 +188,36 @@ class Board:
             if self.board[row][col] is None
         ]
     
+    def valid_moves_at_row(self,row : int) -> list[int]:
+        """
+        Returns a list of all valid moves at a given row of the board.
+
+        A valid move at a row is a position on that row that is not already occupied by a symbol.
+
+        Args:
+            row (int): The row index for which to find valid moves
+
+        Returns:
+            list[int]: A list of valid move column positions
+        """
+
+        return [(col) for col in range(self.dimensions) if self.board[row][col] is None]
+    
+    def valid_moves_at_col(self,col : int) -> list[int]:
+        """
+        Returns a list of all valid moves at a given column of the board.
+
+        A valid move at a column is a position on that column that is not already occupied by a symbol.
+
+        Args:
+            col (int): The column index for which to find valid moves
+
+        Returns:
+            list[int]: A list of valid move row positions
+        """
+        
+        return [(row) for row in range(self.dimensions) if self.board[row][col] is None]
+    
     def moves_by(self,symbol : Symbol) -> list[tuple[int,int]] :
         """
             Retrieve all moves made by a specific symbol.
@@ -258,6 +288,11 @@ class Board:
         """Undoes the last move made on the board."""
         self.current_player = self.current_player.other()
         self.undo_move(self.moves.pop())
+
+    from collections import defaultdict;
+    
+    def __has_consecutive_points(self) -> bool : 
+        pass  
 
     # TODO : FIX THIS nly works for horizontal
     def has_won(self, player: Symbol) -> bool:
