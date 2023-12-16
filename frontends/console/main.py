@@ -71,8 +71,9 @@ def check_for_wins(board,player_symbol) :
 def main() :
     dimensions = get_grid_dimensions()
     in_row_to_win = get_in_row_to_win(dimensions)
-    player_symbol = Symbol.CROSS if get_ja_nein_response("Would you like to be player 1 (X)?") else Symbol.NAUGHT
     is_single_player = get_ja_nein_response("Would you like to player in single player mode")
+
+    player_symbol = (Symbol.CROSS if get_ja_nein_response("Would you like to be player 1 (X)?") else Symbol.NAUGHT) if is_single_player else None
     enable_undo = get_ja_nein_response("Would you like to enable undo support")
     board = Board(dimensions,in_row_to_win)
 
@@ -82,8 +83,9 @@ def main() :
 
         # AI only there in is_single_player 
         # Opposite of human player
-        is_ai_turn = is_single_player and board.current_player != player_symbol
-        
+        is_ai_turn = is_single_player and player_symbol != None and board.current_player != player_symbol
+        print(f"is_ai_turn = {is_ai_turn}")
+        print(f"board.current_player = {board.current_player}")
         if is_ai_turn :
             move = board.best_move_for_current_player()
             if move is not None : 
