@@ -1,5 +1,6 @@
 from enum import Enum
-from collections import deque
+import math
+from typing import Callable
 
 # TODO : ADD has won and ai play methods to the board class 
 
@@ -48,6 +49,9 @@ class Move:
 
 class Board:
     """Represents a Tic-Tac-Toe board."""
+    
+    dimensions: int = 3
+    in_row_to_win: int = 3
 
     def __init__(self, dimensions: int = 3, in_row_to_win: int = 3):
         """
@@ -63,7 +67,7 @@ class Board:
         self.dimensions : int = dimensions
         self.in_row_to_win : int = in_row_to_win 
 
-        self.board : list[list[Symbol | None]]  = [[None for _ in range(dimensions)] for _ in range(dimensions)]
+        self.board : list[list[Symbol | None]]  = [[None for _ in range(self.dimensions)] for _ in range(self.dimensions)]
 
         self.current_player = Symbol.CROSS # Player 1 is cross
         self.moves : list[Move] = []
@@ -238,8 +242,16 @@ class Board:
                 A list of tuples representing the coordinates of all moves made by the current player.
         """
         return self.moves_by(self.current_player)
+    
+    def switch_players(self) -> None :
+        """
+        Switch the current player to the other player.
 
-    def make_move_with(self,symbol : Symbol,cords: tuple[int, int]) -> bool :
+        """
+        self.current_player = self.current_player.other()
+
+
+    def make_move(self,move : Move) -> bool :
         """
         Returns a list of all valid moves on the board.
 
@@ -249,30 +261,90 @@ class Board:
             list[tuple[int, int]]: A list of valid move positions
         """
         try :
-            if not self.is_valid_point(cords) or not self.is_empty_at(cords) :
+            if not self.is_valid_point(move.cords) or not self.is_empty_at(move.cords) :
                 return False
         except :
             return False
         
-        x,y = cords
-        self.board[x][y] = symbol
-        self.moves.append(Move(symbol,cords))
+        x,y = move.cords
+        self.board[x][y] = move.symbol
+        self.moves.append(move)
 
         return True
     
-    def make_move(self,cords: tuple[int, int]) -> bool :
+    def make_move_with(self,player : Symbol,cords: tuple[int, int]) -> bool :
         """
-        Makes a move on the board with the current player's symbol at the specified position.
+        Makes a move on the board with the specified player and coordinates.
 
         Args:
-            cords (tuple[int, int]): The coordinates of the position to place the symbol
+            player (Symbol): The player to make the move.
+            cords (tuple[int, int]): The coordinates of the move.
 
         Returns:
-            bool: True if the move was successful, False if the position was invalid
+            bool: True if the move was successful, False otherwise.
         """
-        temp = self.make_move_with(self.current_player,cords)
-        self.current_player = self.current_player.other()
-        return temp
+        return self.make_move(Move(player,cords))
+    
+    def make_move_with_current_player(self,cords: tuple[int, int]) -> bool : 
+        """
+        Makes a move on the board with the current player and coordinates.
+
+        Args:
+            cords (tuple[int, int]): The coordinates of the move.
+
+        Returns:
+            bool: True if the move was successful, False otherwise.
+        """
+        return self.make_move(Move(self.current_player,cords))
+    
+    def make_move_and_switch(self,move : Move) -> bool :
+        """
+        Makes a move on the board with the specified move and switches players afterwards.
+
+        Args:
+            move (Move): The move to make.
+
+        Returns:
+            bool: True if the move was successful, False otherwise.
+        """
+
+        t = self.make_move(move)
+        if t :
+            self.switch_players()
+        return t
+    
+    def make_move_with_and_switch(self,player : Symbol,cords: tuple[int, int]) -> bool :
+        """
+        Makes a move with the specified player and coordinates, and then switches players afterwards.
+
+        Args:
+            player (Symbol): The player to make the move.
+            cords (tuple[int, int]): The coordinates of the move.
+
+        Returns:
+            bool: True if the move was successful, False otherwise.
+        """
+        t = self.make_move_with(player,cords)
+        if t :
+            self.switch_players()
+        return t
+
+    def make_move_with_current_player_and_switch(self,cords: tuple[int, int]) -> bool :
+        """
+        Makes a move with the current player and coordinates, and then switches players afterwards.
+
+        Args:
+            cords (tuple[int, int]): The coordinates of the move.
+
+        Returns:
+            bool: True if the move was successful, False otherwise.
+        """
+        t = self.make_move_with_current_player(cords)
+        
+        if t :
+            self.switch_players()
+
+        return t
     
     def undo_move(self,move : Move) :
         """
@@ -289,14 +361,219 @@ class Board:
         self.current_player = self.current_player.other()
         self.undo_move(self.moves.pop())
 
-    from collections import defaultdict;
-    
-    def __has_consecutive_points(self) -> bool : 
-        pass  
+    def undo_moves(self,moves : list[Move]) :
+        """
+        Undoes the specified list of moves.
 
-    # TODO : FIX THIS nly works for horizontal
-    def has_won(self, player: Symbol) -> bool:
-        pass
+        Args:
+            moves (list[Move]): A list of Move objects to undo.
+        """
+        for move in moves :
+            self.undo_move(move)
+
+    def undo_last_moves(self,n : int = 1) :
+        """
+        Undoes the specified number of moves.
+
+        Args:
+            n (int, optional): The number of moves to undo. Defaults to 1.
+        """
+        for _ in range(n) :
+            self.undo_last_move()
+
+    # Can remove all the weird checking
+    def __dimesions_equal_in_row_to_win(self,player : Symbol) -> bool:
+        # Check horizontal
+        for row in self.board:
+            if all(symbol == player for symbol in row):
+                return True
+            
+
+        #Check vertical
+        for col in range(self.dimensions) :
+            if all(self.board[row][col] == player for row in range(self.dimensions)) :
+                return True
+            
+        # Check diagonals
+        return all(self.board[i][i] == player for i in range(self.dimensions))
+
+    def has_won(self,player : Symbol) -> bool :
+        """
+        Check if the given player has won the game.
+
+        Args:
+            player (Symbol): The player to check for victory.
+
+        Returns:
+            bool: `True` if the player has won, `False` otherwise.
+        """
+        # TODO : Replace else False with real logic
+        return self.__dimesions_equal_in_row_to_win(player) if self.dimensions == self.in_row_to_win else False
+
+    def has_current_player_won(self) -> bool :
+        """
+        Check if the current player has won the game.
+
+        Returns:
+            bool: `True` if the current player has won, `False` otherwise.
+        """
+        return self.has_won(self.current_player)
+    
+    def has_any1_won(self) -> Symbol | None :
+        """
+        Checks if either player has won the game.
+
+        Returns:
+            player : The player who won
+        """
+        if self.has_won(Symbol.CROSS) :
+            return Symbol.CROSS
+        
+        if self.has_won(Symbol.CROSS) :
+            return Symbol.CROSS
+        
+        return None
+
+    
+    def __evaluate_board(self,player : Symbol) -> float : 
+        return math.inf if self.has_won(player) else (-math.inf if self.has_won(player.other()) else 0) 
+
+    def __minimax_with_alpha_beta_pruning(
+        self,
+        final_value : float,
+        opposite_maximizing_player : bool,
+        player : Symbol,
+        possible_moves : list[tuple[int,int]],
+        depth : int,
+        alpha : float,
+        beta : float,
+        update_value_condition : Callable[[float,float],bool],
+        update_alpha_beta : Callable[[float,float,float],tuple[float,float]]
+    ) -> tuple[float,tuple[int,int] | None] :
+        final_move = None
+        for move in possible_moves :
+            self.make_move_with(player,move)
+            
+            # To figure out how many moves to undo , to keep board same without copying it
+            move_count = self.move_count()
+            
+            move_value,_ = self.__get_move_for(
+                player=player,
+                depth=depth - 1,
+                maximizing_player=opposite_maximizing_player,
+                alpha=alpha,
+                beta=beta
+            )
+
+            self.undo_last_moves(self.move_count() - move_count)
+            
+            # TODO : Check wtf is happening here , im pretty sure its wrong
+            self.undo_last_move()
+
+            if update_value_condition(move_value,final_value) :
+                final_value = move_value
+                final_move = move
+
+            __a,__b = update_alpha_beta(final_value,alpha,beta)
+            alpha = __a
+            beta = __b
+
+            if alpha >= beta:
+                break
+
+        return final_value , final_move
+
+    def __get_move_for(
+        self, 
+        player : Symbol,
+        depth : int,
+        maximizing_player : bool,
+        alpha : float = -math.inf,
+        beta : float = math.inf
+    ) -> tuple[float,tuple[int,int] | None]  : 
+        # TODO : Optimze this , as its gonna be last possible moves - movemade
+        possible_moves = self.valid_moves()
+
+        if depth == 0 or len(possible_moves) == 1 or (self.has_any1_won() is not None) :
+            return self.__evaluate_board(player), None
+         
+        final_value , update_value_condition , update_alpha_beta = (
+            -math.inf,
+            lambda mvalue , fvalue :  mvalue > fvalue,
+            lambda fvalue , alpha , beta : (max(alpha,fvalue),beta)
+        ) if maximizing_player else (
+            math.inf,
+            lambda mvalue , fvalue :  mvalue < fvalue,
+            lambda fvalue , alpha , beta : (alpha,min(beta,fvalue))
+        )
+
+        opposite_maximizing_player = not maximizing_player
+
+        return self.__minimax_with_alpha_beta_pruning(
+            final_value,
+            opposite_maximizing_player,
+            player,
+            possible_moves,
+            depth,
+            alpha,
+            beta,
+            update_value_condition,
+            update_alpha_beta
+        )
+
+    __optimal_log2 = math.log2(dimensions * in_row_to_win)
+    __optimal_depth_for_max_player = math.ceil(__optimal_log2)
+    __optimal_depth_for_min_player = math.floor(__optimal_log2) + 1
+
+    def best_move_for(self,player : Symbol,depth : int = __optimal_depth_for_max_player) -> Move | None :
+        """
+        Finds the best move for the specified player.
+
+        Args:
+            player (Symbol): The player for whom to find the best move.
+            depth (int, optional): The depth of the search. Defaults to the optimal depth.
+        """
+        _ , cords = self.__get_move_for(
+            player,
+            depth,
+            maximizing_player=True
+        )
+
+        return None if cords is None else Move(player,cords)
+
+    def worst_move_for(self,player : Symbol,depth : int = __optimal_depth_for_min_player) -> Move | None :
+        """
+        Finds the worst move for the specified player.
+
+        Args:
+            player (Symbol): The player for whom to find the worst move.
+            depth (int, optional): The depth of the search. Defaults to the optimal depth.
+        """
+        _ , cords = self.__get_move_for(
+            player,
+            depth,
+            maximizing_player=False
+        )
+
+        return None if cords is None else Move(player,cords)
+
+    def best_move_for_current_player(self,depth : int = __optimal_depth_for_max_player) -> Move | None :
+        """
+        Finds the best move for the current player.
+
+        Args:
+            depth (int, optional): The depth of the search. Defaults to the optimal depth.
+        """
+        return self.best_move_for(self.current_player,depth)
+
+    def worst_move_for_current_player(self,depth : int = __optimal_depth_for_min_player) -> Move | None :
+        """
+        Finds the worst move for the current player.
+
+        Args:
+            depth (int, optional): The depth of the search. Defaults to the optimal depth.
+        """
+        return self.worst_move_for(self.current_player,depth)
 
     def __repr_row__(self,row : list[Symbol | None]) -> str : 
        return '|'.join([f" {" " if item is None else item.__repr__()} " for item in row])

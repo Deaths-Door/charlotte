@@ -60,3 +60,21 @@ handler([(1, 0), (1, 1), (1, 2)],True)
 handler([(1, 0), (1, 1), (1, 3)],False)
 
 handler([(1, 1), (2, 3), (3, 5)],False)
+
+   """ def __has_consecutive_points(self) -> bool : 
+        pass  
+
+    # TODO : FIX THIS nly works for horizontal
+    def has_won(self, player: Symbol) -> bool:
+        pass
+
+    def __minimax(self,player : Symbol,depth : int) -> tuple[Move | None,int] :
+        if depth == self.in_row_to_win : 
+            _result = 100 if self.has_won(player) else (-100 if self.has_won(player.other()) else 0 )
+            return (None,_result)
+        else :
+            _result = 100 if self.has_won(player) else (-100 if self.has_won(player.other()) else 0 )
+            return (None,_result)
+    
+
+        pass"""
