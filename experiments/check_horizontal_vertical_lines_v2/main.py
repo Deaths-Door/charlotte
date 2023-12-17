@@ -4,7 +4,14 @@ sys.path.insert(0, os.path.abspath('.'))
 
 from charlotte import Symbol, Board ,X , E,O;
 
+"""
+## Note 
+
+Ensure any changes here are reflected in the charlotte.Board.has_won group of functions
+"""
+
 # TODO , allow maybe return range / location where it won
+
 def is_vertical(board : Board,player : Symbol) -> bool :
     # So its avoided
     if board.in_row_to_win == board.dimensions : 
@@ -34,13 +41,22 @@ def is_vertical(board : Board,player : Symbol) -> bool :
             return True    
     return False
 
-
+"""
 def setup_board(grid : list[list[Symbol | None]],dimensions : int,in_row_to_win : int) -> Board :
     board = Board(dimensions,in_row_to_win)
     board.board = grid
     return board
 
+board = setup_board([
+    [E, E, E, E, E],
+    [E, O, E, E, E],
+    [E, O, E, E, E],
+    [E, O, E, E, E],
+    [E, O, E, E, E],
+],5,4)
 
+#assert is_vertical(board,O) is True
+"""
 """board = setup_board([
     [E, O, X, X, X, X],
     [E, E, O, E, E, E],
