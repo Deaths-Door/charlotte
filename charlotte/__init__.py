@@ -424,6 +424,32 @@ class Board:
                 return True    
         return False
 
+    def __is_horizontal_win(self,player : Symbol) -> bool :
+        COL_DEFAULT = 0
+        col = COL_DEFAULT
+        row = 0
+
+        IN_ROW_DEFAULT = 1
+        in_row_till_now = IN_ROW_DEFAULT
+
+        while row < self.dimensions :
+            #TODO : Maybe can optimize by checking if at point where a win is not possible eg dimensions/3 = 1.5 so 2nd square and then if its X or empty then O can't win , can technically drastically cut down on number of iters posssible  but not in cases like dimesinos = 5 and inrowtowin = 2 then no point
+            if self.board[row][col] == player :
+                in_row_till_now += 1
+
+            col += 1
+
+            # means we've reach end of the column so check next one
+            if not col < self.dimensions - 1 :
+                row += 1 
+                col = COL_DEFAULT
+                in_row_till_now = IN_ROW_DEFAULT
+
+            if in_row_till_now == self.in_row_to_win:
+                return True 
+
+        return False
+
     # TODO : Maybe provide coordinates or where is won
     def has_won(self,player : Symbol) -> bool :
         """
@@ -435,7 +461,7 @@ class Board:
         Returns:
             bool: `True` if the player has won, `False` otherwise.
         """
-        return self.__dimesions_equal_in_row_to_win(player) if self.dimensions == self.in_row_to_win else self.__is_vertical_win(player) or None
+        return self.__dimesions_equal_in_row_to_win(player) if self.dimensions == self.in_row_to_win else self.__is_vertical_win(player) or self.__is_horizontal_win(player) None
 
     def has_current_player_won(self) -> bool :
         """
