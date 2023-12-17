@@ -31,6 +31,10 @@ class Symbol(Enum):
         """
         return self.value
 
+X = Symbol.CROSS
+O = Symbol.NAUGHT
+E = None
+
 class Move:
     """Represents a move in a Tic-Tac-Toe game."""
 

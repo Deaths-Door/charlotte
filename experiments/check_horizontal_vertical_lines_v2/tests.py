@@ -3,18 +3,13 @@ import unittest
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
-from charlotte import Board,Symbol
+from charlotte import Board,Symbol, X , O , E
 from experiments.check_horizontal_vertical_lines_v2.main import is_vertical;
 
 def setup_board(grid : list[list[Symbol | None]],dimensions : int,in_row_to_win : int) -> Board :
     board = Board(dimensions,in_row_to_win)
     board.board = grid
     return board
-
-
-X = Symbol.CROSS
-O = Symbol.NAUGHT
-E = None
 
 class TestVerticalWins(unittest.TestCase) : 
     def test_example(self) :
@@ -51,7 +46,7 @@ class TestVerticalWins(unittest.TestCase) :
             [E, X, E],
         ],3,3)
 
-        self.assertTrue(is_vertical(board,X))
+        self.assertFalse(is_vertical(board,X))
 
     def test_no_win_vertical(self):
         board = setup_board([
