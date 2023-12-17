@@ -41,6 +41,36 @@ def is_vertical(board : Board,player : Symbol) -> bool :
             return True    
     return False
 
+def is_horizontal(board : Board,player : Symbol) -> bool :
+    # So its avoided
+    if board.in_row_to_win == board.dimensions : 
+        return board.has_won(player) 
+    
+    COL_DEFAULT = 0
+    col = COL_DEFAULT
+    row = 0
+
+    IN_ROW_DEFAULT = 1
+    in_row_till_now = IN_ROW_DEFAULT
+
+    while row < board.dimensions :
+        #TODO : Maybe can optimize by checking if at point where a win is not possible eg dimensions/3 = 1.5 so 2nd square and then if its X or empty then O can't win , can technically drastically cut down on number of iters posssible  but not in cases like dimesinos = 5 and inrowtowin = 2 then no point
+        if board.board[row][col] == player :
+            in_row_till_now += 1
+
+        col += 1
+
+        # means we've reach end of the row so check next one
+        if not col < board.dimensions - 2 :
+            row += 1
+            col = COL_DEFAULT
+            in_row_till_now = IN_ROW_DEFAULT
+
+        if in_row_till_now == board.in_row_to_win:
+            return True  
+        
+    return False
+
 """
 def setup_board(grid : list[list[Symbol | None]],dimensions : int,in_row_to_win : int) -> Board :
     board = Board(dimensions,in_row_to_win)
