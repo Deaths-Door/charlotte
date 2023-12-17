@@ -60,7 +60,7 @@ def successful_move(board,player_symbol,successful) :
     
     print("Invalid coordinates. Please enter a valid coordinate.")
 
-def check_for_wins(board,player_symbol) :
+def check_for_wins(board : Board,player_symbol) :
     winner = board.has_any1_won()
 
     if winner is not None :

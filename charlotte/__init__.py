@@ -2,8 +2,6 @@ from enum import Enum
 import math
 from typing import Callable
 
-# TODO : ADD has won and ai play methods to the board class 
-
 class Symbol(Enum):
     """ 
     Represents the two possible symbols in the game: X and O
@@ -397,6 +395,10 @@ class Board:
         # Check diagonals
         return all(self.board[i][i] == player for i in range(self.dimensions))
 
+    def __tougher_check(self,player : Symbol) -> bool :
+        #TODO : Replace with real logic
+        return False
+
     def has_won(self,player : Symbol) -> bool :
         """
         Check if the given player has won the game.
@@ -407,8 +409,7 @@ class Board:
         Returns:
             bool: `True` if the player has won, `False` otherwise.
         """
-        # TODO : Replace else False with real logic
-        return self.__dimesions_equal_in_row_to_win(player) if self.dimensions == self.in_row_to_win else False
+        return self.__dimesions_equal_in_row_to_win(player) if self.dimensions == self.in_row_to_win else self.__tougher_check(player)
 
     def has_current_player_won(self) -> bool :
         """
@@ -455,7 +456,7 @@ class Board:
             self.make_move_with(player,move)
             
             # To figure out how many moves to undo , to keep board same without copying it
-            move_count = self.move_count()
+           # move_count = self.move_count()
             
             move_value,_ = self.__get_move_for(
                 player=player,
@@ -465,9 +466,7 @@ class Board:
                 beta=beta
             )
 
-            self.undo_last_moves(self.move_count() - move_count)
-            
-            # TODO : Check wtf is happening here , im pretty sure its wrong
+           # self.undo_last_moves(self.move_count() - move_count)
             self.undo_last_move()
 
             if update_value_condition(move_value,final_value) :

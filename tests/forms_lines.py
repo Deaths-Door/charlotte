@@ -64,7 +64,7 @@ handler([(1, 1), (2, 3), (3, 5)],False)
    """ def __has_consecutive_points(self) -> bool : 
         pass  
 
-    # TODO : FIX THIS nly works for horizontal
+    # ToDO : FIX THIS nly works for horizontal
     def has_won(self, player: Symbol) -> bool:
         pass
 
