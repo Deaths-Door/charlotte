@@ -1,3 +1,4 @@
+from collections import defaultdict
 from enum import Enum
 import math
 from typing import Callable
@@ -450,6 +451,38 @@ class Board:
 
         return False
 
+    def __groups(self,data, func):
+        grouping = defaultdict(list)
+        for y in range(len(data)):
+            for x in range(len(data[y])):
+                grouping[func(x, y)].append(data[y][x])
+        return list(map(grouping.get, sorted(grouping)))
+    
+    def __check_consecutive(self,nums, x):
+        for i in range(len(nums) - x + 1):
+            if all(nums[i] == nums[i + j] for j in range(x)):
+                return True
+        return False
+
+    def __is_diagonal_win_impl(self,player : Symbol,closure) -> bool :
+        for item in self.__groups(self.board,closure) :
+            ilen = len(item)
+            
+            if ilen < self.in_row_to_win :
+                continue
+            
+            if ilen == self.in_row_to_win :
+                if all([i == player for i in item]) :
+                    return True
+            
+            if self.__check_consecutive(item,self.in_row_to_win) :
+                return True
+
+        return False
+
+    def __is_diagonal_win(self,player : Symbol) -> bool :
+        return self.__is_diagonal_win_impl(player,lambda x, y: x + y) or self.__is_diagonal_win_impl(player,lambda x, y: x - y)
+
     # TODO : Maybe provide coordinates or where is won
     def has_won(self,player : Symbol) -> bool :
         """
@@ -461,7 +494,7 @@ class Board:
         Returns:
             bool: `True` if the player has won, `False` otherwise.
         """
-        return self.__dimesions_equal_in_row_to_win(player) if self.dimensions == self.in_row_to_win else self.__is_vertical_win(player) or self.__is_horizontal_win(player) None
+        return self.__dimesions_equal_in_row_to_win(player) if self.dimensions == self.in_row_to_win else self.__is_vertical_win(player) or self.__is_horizontal_win(player) or self.__is_diagonal_win(player)
 
     def has_current_player_won(self) -> bool :
         """
