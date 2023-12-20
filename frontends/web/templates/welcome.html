@@ -37,27 +37,28 @@
                 </li>
             </ul>            
             
+            <!--TODO : Get input generate ouput etc-->
             <ul class="info">
                 <li class="settings-form">
-                    <input class="grid-dimesions" type="number" placeholder="Grid dimesions (defaults to 3)">
-                    <input class="grid-dimesions" type="number" placeholder="Number of 'symbols' in row to win (default is 3):">
+                    <input type="number" placeholder="Grid dimesions (defaults to 3)" />
+                    <input type="number" placeholder="Number of 'symbols' in row to win (default is 3)" />
 
-                    <div class="input-group">
+                    <form class="input-group">
                         <input type="checkbox" id="checkbox-enable-undo" hidden />
                         <label for="checkbox-enable-undo" class="checkbox">
                             <span class="icon"></span>
                             <span class="text">Enable undo support</span>
                         </label>
-                    </div> 
+                    </form> 
 
                     <!--TODO Conditionally show this-->
-                    <div class="input-group">
+                    <form class="input-group">
                         <input type="checkbox" id="checkbox-select-player" hidden />
                         <label for="checkbox-select-player" class="checkbox">
                             <span class="icon"></span>
                             <span class="text">Would you like to be player 1 (X)?</span>
                         </label>
-                    </div> 
+                    </form> 
 
                     <button class="play-btn">
                         <span>Play</span><i></i>
@@ -68,6 +69,10 @@
                     <h4>You have won the last { N } games!</h4>
                 </li>
             </ul>
+
+            <div class="gameboard">
+                
+            </div>
         </main>
         <footer class="card">
             <p>Developed by Aarav Shah</p>

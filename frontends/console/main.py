@@ -84,8 +84,7 @@ def main() :
         # AI only there in is_single_player 
         # Opposite of human player
         is_ai_turn = is_single_player and player_symbol != None and board.current_player != player_symbol
-        print(f"is_ai_turn = {is_ai_turn}")
-        print(f"board.current_player = {board.current_player}")
+
         if is_ai_turn :
             move = board.best_move_for_current_player()
             if move is not None : 

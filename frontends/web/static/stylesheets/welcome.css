@@ -288,6 +288,7 @@
 .info > .settings-form {
     --btn-background-color : #272822;
     background: var(--btn-background-color);
+    border-radius: 12px;
     padding: 12px;
     position: relative;
     top : -4.5rem;
@@ -397,6 +398,18 @@
     }
 }
 
+/* NUMBER INPUT */
+input[type=number] {
+    margin: 12px;
+    padding: 12px;
+    font-weight: bold;
+    border-radius: 16px;
+    border: none;
+}
+
+input[type=number]:focus {
+    outline: none;
+}
 
 /* CHECKBOX */
   
