@@ -1,0 +1,24 @@
+* {
+    box-sizing: border-box;
+}
+  
+:root {
+    --text-color: hsl(0, 0%, 100%);
+    --font-family : "Oswald", sans-serif;
+}
+
+body {
+    background-color: black;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 , p , label {
+    color: var(--text-color);
+    font-family: var(--font-family);
+}
+
+.card {
+    background-color: #121212;
+    border-radius: 32px;
+    padding : 8px
+}
